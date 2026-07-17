@@ -256,7 +256,7 @@ Multi-step Telegram flows use a `pending_state` + `pending_payload` pattern on t
 | Phase 2 | Gemini text/image parsing + confirmation flow | ✅ Complete | |
 | Phase 3 | Full CRUD + OFX import + category correction | ✅ Complete | OFX uses AI batch-categorization |
 | Phase 4 | `/summary`, `/categories`, `/month`, `/dashboard` + BFF aggregation endpoints | ✅ Complete | |
-| Phase 5 | Web dashboard (`household-finance-web`) | 🔄 In Progress | Dashboard + Transactions pages built; landing page is still Next.js scaffold |
+| Phase 5 | Web dashboard (`household-finance-web`) | ✅ Complete | |
 | Phase 6 | REST auth migration (Supabase JWT) | ⬜ Planned | |
 | Phase 7 | Mobile app (`household-finance-mobile`) | ⬜ Planned | |
 
