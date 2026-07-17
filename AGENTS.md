@@ -1,4 +1,4 @@
-﻿# AGENTS.md — Monorepo-Wide Coding Agent Directives
+# AGENTS.md — Monorepo-Wide Coding Agent Directives
 
 > **Scope:** These directives apply to ALL repositories in this monorepo.
 > They are cross-cutting rules that override any app-specific AGENTS.md.
@@ -75,12 +75,12 @@ These are accepted limitations documented in ADRs. Do not "fix" them without a n
 |---|---|
 | No `python-telegram-bot` | Use raw `httpx.AsyncClient` for all Telegram Bot API calls (ADR-002) |
 | No polling loop | Telegram uses webhooks only (ADR-001) |
-| No GPT-4o or other LLMs | Gemini 1.5 Flash only, for cost (ADR-003) |
+| No GPT-4o or other LLMs | `gemini-3.1-flash-lite` only, for cost (ADR-010, supersedes ADR-003) |
 | RLS always on | Supabase Row Level Security is required from Phase 1 (ADR-004) |
 | One user = one household (MVP) | No `household_members` join table yet (ADR-008) |
 | REST auth = MVP `telegram_id` param | **Not secure.** Do NOT build features that depend on this being permanent (ADR-009) |
 
-> **On the REST auth constraint specifically:** The `telegram_id` query param is a known, accepted security gap for the MVP. Do NOT silently "improve" it by adding JWT middleware, session cookies, or any other auth mechanism — that work is scoped to Phase 6 and requires a dedicated ADR.
+> **On the REST auth constraint specifically:** The `telegram_id` / `household_id` query params are a known, accepted security gap for the MVP. Do NOT silently "improve" them by adding JWT middleware, session cookies, or any other auth mechanism — that work is scoped to Phase 6 and requires a dedicated ADR.
 
 ---
 
