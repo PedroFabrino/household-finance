@@ -143,7 +143,7 @@ These are API-side cleanup items to be done in the same sprint as the dashboard 
 
 | # | Item | App | Effort |
 |---|---|---|---|
-| 10 | Write ADR for chosen auth strategy (Supabase JWT recommended) | Both | 🟡 Decision + ADR |
+| 10 | Write ADR for chosen auth strategy (Supabase JWT recommended) | Both | ✅ Done |
 | 11 | Implement JWT-based identity resolution in API | API | 🔴 Large |
 | 12 | Update web to pass auth token with every BFF request | Web | 🔴 Large |
 
