@@ -1,4 +1,4 @@
-﻿# IMPLEMENTATION_TODO.md
+# IMPLEMENTATION_TODO.md
 
 > Gap analysis produced from a full audit of both repos on 2026-07-17.
 > Reflects what was planned vs. what is actually implemented.
@@ -35,28 +35,23 @@
   on transactions — not in original plan but properly migrated
 - `/dashboard` bot command sends a direct link to the web dashboard
 
-### ⚠️ Deviations from Original Plan
+### ✅ Resolved Deviations
 
-| Item | Original Plan | Actual |
-|---|---|---|
-| LLM model | `gemini-1.5-flash` | `gemini-3.1-flash-lite` — **ADR-003 needs an update** |
-| `google-genai` SDK | `google-generativeai` | Migrated to the newer `google-genai` SDK with async support |
-| Summary aggregation | Proposed as SQL aggregation | Done in-memory (fetch all txns, aggregate in Python) — may be slow at scale |
-| Auth params | `telegram_id` only | Accepts both `telegram_id` AND `household_id` — web uses `household_id` directly |
+| Item | Resolution |
+|---|---|
+| LLM model changed (`gemini-1.5-flash` → `gemini-3.1-flash-lite`) | **ADR-010** written — model deprecated, free-tier upgrade |
+| SDK changed (`google-generativeai` → `google-genai`) | **ADR-011** written — old SDK deprecated by Google |
+| Auth params accept `household_id` in addition to `telegram_id` | **ADR-009 updated** — intentional; required for web dashboard before auth exists |
 
-### 🔴 Open Issues / Tech Debt
+### 🔴 Open Tech Debt — Fix as part of Phase 5 dashboard completion
 
-1. **ADR-003 outdated** — States `gemini-1.5-flash`. Actual model is `gemini-3.1-flash-lite`. Update the ADR.
+These are API-side cleanup items to be done in the same sprint as the dashboard work.
 
-2. **Summary aggregation is in-memory** — `get_summary()` fetches up to 10,000 transactions and aggregates in Python. Should be moved to a Supabase SQL view or RPC for performance at scale. No ticket yet.
-
-3. **`list[dict]` return type on members endpoint** — `GET /api/households/me/members` returns `list[dict]`, which violates the Pydantic schema rule. Needs a `MemberResponse` schema.
-
-4. **Inline `import` inside route handlers** — `households.py` has `import uuid` inside function bodies. Should be top-level.
-
-5. **Test coverage gaps** — Tests exist for: `test_webhook.py`, `test_transactions.py`, `test_db_service.py`, `test_llm_service.py`, `test_e2e.py`. Missing: tests for `households.py` endpoints (members, categories).
-
-6. **`BASE_URL` env var not in `.env.example`** — Added to `config.py` but needs to be added to `.env.example`.
+- **Summary aggregation is in-memory** — `get_summary()` fetches all transactions and aggregates in Python. Move to a Supabase SQL `GROUP BY` query or RPC for correctness at scale.
+- **`list[dict]` return type on members endpoint** — `GET /api/households/me/members` returns `list[dict]`, violating the Pydantic schema rule. Add a `MemberResponse` schema to `schemas/transaction.py`.
+- **Inline `import uuid` inside route handlers** — `households.py` imports `uuid` inside function bodies. Move to top-level.
+- **Missing tests for households endpoints** — `test_webhook.py` etc. exist; `households.py` members and categories endpoints have no test coverage. Add `test_households.py`.
+- **`BASE_URL` missing from `.env.example`** — Present in `config.py` but not documented in the example file.
 
 ---
 
@@ -110,27 +105,28 @@
 
 | Document | Status | Notes |
 |---|---|---|
-| `decisions.md` | ⚠️ Needs update | ADR-003 refers to `gemini-1.5-flash`; actual model is `gemini-3.1-flash-lite`. Add ADR for `google-genai` SDK migration and for new transaction columns (`type`, `account_type`, `external_id`). |
+| `decisions.md` | ✅ Updated | ADR-003 superseded by ADR-010; ADR-009 updated; ADR-010 and ADR-011 added |
 | `deployment.md` | ✅ Accurate | Covers local + prod setup correctly |
-| `implementation-plan.md` | ⚠️ Outdated | Describes Phases 1–4 as planned; does not reflect what was actually built (extra endpoints, column changes, Vercel deploy) |
+| `implementation-plan.md` | ⚠️ Outdated | Describes Phases 1–4 as planned; does not reflect what was actually built (extra endpoints, column changes, Vercel deploy). Low priority — superseded by this document |
 
 ---
 
 ## Priority Order (Suggested Next Steps)
 
-### Immediate (before Phase 6)
+### Phase 5 — Complete Web Dashboard (current focus)
 
 | # | Item | App | Effort |
 |---|---|---|---|
-| 1 | Decide on landing page strategy (see §Web item 1) | Web | 🟡 Decision needed |
-| 2 | Create `src/types/` and remove `any` types | Web | 🟢 Small |
-| 3 | Create `src/lib/api.ts` API client | Web | 🟢 Small |
-| 4 | Add `loading.tsx` to dashboard route | Web | 🟢 Small |
-| 5 | Update ADR-003 to reflect `gemini-3.1-flash-lite` and `google-genai` SDK | API | 🟢 Small |
-| 6 | Add `MemberResponse` Pydantic schema to `schemas/transaction.py` | API | 🟢 Small |
-| 7 | Move inline `import uuid` to top-level in `households.py` | API | 🟢 Trivial |
-| 8 | Add `BASE_URL` to `.env.example` | API | 🟢 Trivial |
-| 9 | Add tests for `households.py` member and category endpoints | API | 🟡 Medium |
+| 1 | **Decide on landing page strategy** (see §Web item 1 above — options A/B/C) | Web | 🟡 Decision needed |
+| 2 | Implement landing page once decision is made | Web | 🟢 Small–Medium |
+| 3 | Create `src/types/` with typed interfaces; remove all `any` casts | Web | 🟢 Small |
+| 4 | Create `src/lib/api.ts` typed API client (deduplicate fetch logic) | Web | 🟢 Small |
+| 5 | Add `loading.tsx` to dashboard + transactions routes | Web | 🟢 Small |
+| 6 | Move summary aggregation from Python in-memory to Supabase SQL `GROUP BY` | API | 🟡 Medium |
+| 7 | Add `MemberResponse` Pydantic schema; fix `list[dict]` on members endpoint | API | 🟢 Small |
+| 8 | Move inline `import uuid` to top-level in `households.py` | API | 🟢 Trivial |
+| 9 | Add `BASE_URL` and `API_URL` / `NEXT_PUBLIC_API_URL` to `.env.example` | API | 🟢 Trivial |
+| 10 | Add `test_households.py` for members + categories endpoints | API | 🟡 Medium |
 
 ### Phase 6 — Auth
 
