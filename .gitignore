@@ -1,0 +1,12 @@
+﻿# Sub-repos are independent git repositories — do not track them here
+household-finance-api/
+household-finance-web/
+household-finance-mobile/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
