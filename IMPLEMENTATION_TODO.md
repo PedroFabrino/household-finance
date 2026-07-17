@@ -14,7 +14,7 @@
 | 2 — Parsing + confirmation | ✅ Done | N/A |
 | 3 — CRUD + OFX | ✅ Done | ✅ Done (transactions page) |
 | 4 — Summaries + aggregation | ✅ Done | ✅ Done (dashboard) |
-| 5 — Web dashboard | N/A | 🔄 In Progress |
+| 5 — Web dashboard | ✅ Done | ✅ Done |
 | 6 — Auth (JWT) | ⬜ Not started | ⬜ Not started |
 | 7 — Mobile | ⬜ Not started | N/A |
 
@@ -80,22 +80,22 @@ These are API-side cleanup items to be done in the same sprint as the dashboard 
 1. **Landing page (`/`)** ✅ Decision made — implement **both B and C**:
    - **Static marketing page (C):** Explains what the app is, shows a link/QR to the Telegram bot.
    - **Telegram deep-link entry (B):** Bot's `/dashboard` command sends a URL with `household_id` that opens the dashboard directly. The landing page handles unknown/missing `household_id` gracefully by redirecting to the marketing view.
-   - No household ID entry form (Option A) — too much friction without auth.
+   - No household ID entry form (Option A) — too much friction without auth. ✅ Done
 
-2. **`src/types/` directory** 🔴 **MANDATORY** — Create typed interfaces mirroring the Pydantic schemas:
+2. **`src/types/` directory** ✅ **MANDATORY** — Create typed interfaces mirroring the Pydantic schemas:
    - `Transaction`, `Household`, `HouseholdSettings`, `SummaryResponse`, `CategorySummaryResponse`, `MerchantSummaryResponse`, `MemberResponse`
-   - Remove **all** `any` casts in dashboard and transactions pages.
+   - Remove **all** `any` casts in dashboard and transactions pages. ✅ Done
 
-3. **API client abstraction** 🔴 **MANDATORY** — Create `src/lib/api.ts` with typed fetch helpers for every BFF endpoint. All pages must import from this module — no inline `fetch()` calls allowed anywhere.
-   - Additionally: **purge all `fetch()` calls that do not go through `/api`** from the codebase. No direct Supabase calls, no external HTTP calls from the frontend.
+3. **API client abstraction** ✅ **MANDATORY** — Create `src/lib/api.ts` with typed fetch helpers for every BFF endpoint. All pages must import from this module — no inline `fetch()` calls allowed anywhere.
+   - Additionally: **purge all `fetch()` calls that do not go through `/api`** from the codebase. No direct Supabase calls, no external HTTP calls from the frontend. ✅ Done
 
-4. **Locale switching** 🔴 **MANDATORY** — `next-intl` locale routing is needed. Add a language switcher to the topbar (initially `pt-BR` / `en`). Requires adding a `[locale]` route segment and the `en.json` messages file.
+4. **Locale switching** ✅ **MANDATORY** — `next-intl` locale routing is needed. Add a language switcher to the topbar (initially `pt-BR` / `en`). Requires adding a `[locale]` route segment and the `en.json` messages file. ✅ Done
 
-5. **Dashboard: month picker** 🔴 **MANDATORY** — Add a month picker to the dashboard page so the summary cards and category chart update for any selected month (not just the current one).
+5. **Dashboard: month picker** ✅ **MANDATORY** — Add a month picker to the dashboard page so the summary cards and category chart update for any selected month (not just the current one). ✅ Done
 
-6. **Proper transaction deletion** 🔴 **MANDATORY** — The delete action on the transactions page needs: optimistic UI update, error rollback, and a success/error toast notification.
+6. **Proper transaction deletion** ✅ **MANDATORY** — The delete action on the transactions page needs: optimistic UI update, error rollback, and a success/error toast notification. ✅ Done
 
-7. **Loading skeletons** 🔴 **MANDATORY** — Add `loading.tsx` to both the dashboard and transactions routes so Next.js shows skeleton placeholders during server-side data fetching instead of a blank screen.
+7. **Loading skeletons** ✅ **MANDATORY** — Add `loading.tsx` to both the dashboard and transactions routes so Next.js shows skeleton placeholders during server-side data fetching instead of a blank screen. ✅ Done
 
 8. **Members page** — ~~Deferred.~~ The `/api/households/me/members` endpoint is used only for member filtering on the transactions page. No dedicated members management page is needed at this stage.
 
@@ -121,23 +121,23 @@ These are API-side cleanup items to be done in the same sprint as the dashboard 
 
 | # | Item | Priority | Effort |
 |---|---|---|---|
-| W1 | Implement landing page: static marketing view + `household_id` deep-link entry (B+C) | 🔴 Mandatory | 🟡 Medium |
-| W2 | Create `src/types/` — typed interfaces for all BFF responses; remove all `any` casts | 🔴 Mandatory | 🟢 Small |
-| W3 | Create `src/lib/api.ts` typed API client; replace all inline `fetch()` calls; purge any non-`/api` fetches | 🔴 Mandatory | 🟢 Small |
-| W4 | Add locale switcher to topbar; add `[locale]` route segment; create `messages/en.json` | 🔴 Mandatory | 🟡 Medium |
-| W5 | Add month picker to dashboard page (summary cards + category chart update on change) | 🔴 Mandatory | 🟢 Small |
-| W6 | Proper transaction deletion: optimistic update, error rollback, success/error toast | 🔴 Mandatory | 🟢 Small |
-| W7 | Add `loading.tsx` to dashboard and transactions routes (skeleton placeholders) | 🔴 Mandatory | 🟢 Small |
+| W1 | Implement landing page: static marketing view + `household_id` deep-link entry (B+C) | ✅ Done | 🟡 Medium |
+| W2 | Create `src/types/` — typed interfaces for all BFF responses; remove all `any` casts | ✅ Done | 🟢 Small |
+| W3 | Create `src/lib/api.ts` typed API client; replace all inline `fetch()` calls; purge any non-`/api` fetches | ✅ Done | 🟢 Small |
+| W4 | Add locale switcher to topbar; add `[locale]` route segment; create `messages/en.json` | ✅ Done | 🟡 Medium |
+| W5 | Add month picker to dashboard page (summary cards + category chart update on change) | ✅ Done | 🟢 Small |
+| W6 | Proper transaction deletion: optimistic update, error rollback, success/error toast | ✅ Done | 🟢 Small |
+| W7 | Add `loading.tsx` to dashboard and transactions routes (skeleton placeholders) | ✅ Done | 🟢 Small |
 
 #### API — Cleanup (same sprint)
 
 | # | Item | Priority | Effort |
 |---|---|---|---|
-| A1 | Move summary aggregation to Supabase SQL `GROUP BY` query or RPC | 🔴 Mandatory | 🟡 Medium |
-| A2 | Add `MemberResponse` Pydantic schema; fix `list[dict]` on members endpoint | 🔴 Mandatory | 🟢 Small |
-| A3 | Move inline `import uuid` to top-level in `households.py` | 🟡 Nice-to-have | 🟢 Trivial |
-| A4 | Add `BASE_URL`, `API_URL`, `NEXT_PUBLIC_API_URL` to `.env.example` | 🔴 Mandatory | 🟢 Trivial |
-| A5 | Add `test_households.py` for members + categories endpoints | 🔴 Mandatory | 🟡 Medium |
+| A1 | Move summary aggregation to Supabase SQL `GROUP BY` query or RPC | ✅ Done | 🟡 Medium |
+| A2 | Add `MemberResponse` Pydantic schema; fix `list[dict]` on members endpoint | ✅ Done | 🟢 Small |
+| A3 | Move inline `import uuid` to top-level in `households.py` | ✅ Done | 🟢 Trivial |
+| A4 | Add `BASE_URL`, `API_URL`, `NEXT_PUBLIC_API_URL` to `.env.example` | ✅ Done | 🟢 Trivial |
+| A5 | Add `test_households.py` for members + categories endpoints | ✅ Done | 🟡 Medium |
 
 ### Phase 6 — Auth
 
